@@ -5,6 +5,10 @@ import 'main_menu_screen.dart';
 class LoginScreen extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  init() {
+    _usernameController.text = 'admin';
+    _passwordController.text = '1234';
+  }
 
   @override
   Widget build(BuildContext context) {
