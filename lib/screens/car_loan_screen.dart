@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
 
 class CarLoanScreen extends StatefulWidget {
   @override
@@ -22,7 +22,7 @@ class _CarLoanScreenState extends State<CarLoanScreen> {
       final double monthlyRate = interestRate / 100 / 12;
       final int totalMonths = loanTerm * 12;
       final double payment =
-          loanAmount * monthlyRate / (1 - (1 + monthlyRate).pow(-totalMonths));
+          loanAmount * monthlyRate / (1 - pow(1 + monthlyRate, -totalMonths));
 
       setState(() {
         _monthlyPayment = payment.toStringAsFixed(2);
