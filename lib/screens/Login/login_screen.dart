@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'main_menu_screen.dart';
+import '../home/home_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  init() {
+
+  @override
+  void initState() {
+    super.initState();
     _usernameController.text = 'admin';
     _passwordController.text = '1234';
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,9 +82,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => MainMenuScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

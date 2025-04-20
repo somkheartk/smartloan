@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class CarLoanCalculatorScreen extends StatefulWidget {
+class CarLoanScreen extends StatefulWidget {
   @override
-  State<CarLoanCalculatorScreen> createState() =>
-      _CarLoanCalculatorScreenState();
+  State<CarLoanScreen> createState() => _CarLoanCalculatorScreenState();
 }
 
-class _CarLoanCalculatorScreenState extends State<CarLoanCalculatorScreen> {
+class _CarLoanCalculatorScreenState extends State<CarLoanScreen> {
   final _loanAmountController = TextEditingController();
   final _interestRateController = TextEditingController();
   final _loanTermController = TextEditingController();
@@ -16,8 +15,15 @@ class _CarLoanCalculatorScreenState extends State<CarLoanCalculatorScreen> {
   String _monthlyPayment = '';
   String _totalPayment = '';
   String _totalInterest = '';
+  bool _isLoading = false; // Add loading state
 
-  void _calculatePayment() {
+  void _calculatePayment() async {
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    await Future.delayed(Duration(seconds: 1)); // Simulate processing delay
+
     final double loanAmount = double.tryParse(_loanAmountController.text) ?? 0;
     final double interestRate =
         double.tryParse(_interestRateController.text) ?? 0;
@@ -49,9 +55,13 @@ class _CarLoanCalculatorScreenState extends State<CarLoanCalculatorScreen> {
         _totalInterest = '';
       });
     }
+
+    setState(() {
+      _isLoading = false; // Hide loading indicator
+    });
   }
 
-  void _showQuotation() {
+  void _showQuotation() async {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController phoneController = TextEditingController();
     final TextEditingController nameController = TextEditingController();
@@ -78,6 +88,16 @@ class _CarLoanCalculatorScreenState extends State<CarLoanCalculatorScreen> {
       );
       return;
     }
+
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    await Future.delayed(Duration(seconds: 1)); // Simulate processing delay
+
+    setState(() {
+      _isLoading = false; // Hide loading indicator
+    });
 
     showDialog(
       context: context,
@@ -182,135 +202,155 @@ class _CarLoanCalculatorScreenState extends State<CarLoanCalculatorScreen> {
         title: Text('Car Loan Calculator'),
         backgroundColor: Colors.orange.shade700,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 3,
-                children: [
-                  TextField(
-                    controller: _loanAmountController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'จำนวนเงินกู้ (บาท)',
-                    ),
-                  ),
-                  TextField(
-                    controller: _downPaymentController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'เงินดาวน์ (บาท)'),
-                  ),
-                  TextField(
-                    controller: _interestRateController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'อัตราดอกเบี้ย (%)'),
-                  ),
-                  TextField(
-                    controller: _loanTermController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'ระยะเวลากู้ (ปี)'),
-                  ),
-                  ElevatedButton(
-                    onPressed: _calculatePayment,
-                    child: Text('คำนวณ'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange.shade700,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 3,
+                    children: [
+                      TextField(
+                        controller: _loanAmountController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'จำนวนเงินกู้ (บาท)',
+                        ),
                       ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _showQuotation,
-                    child: Text('สร้างใบเสนอราคา'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      TextField(
+                        controller: _downPaymentController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'เงินดาวน์ (บาท)',
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20), // เพิ่มระยะห่างระหว่าง GridView และ DataTable
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  DataColumn(
-                    label: Text(
-                      'รายการ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'ผลลัพธ์',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-                rows: [
-                  DataRow(
-                    cells: [
-                      DataCell(Text('เงินดาวน์')),
-                      DataCell(Text('${_downPaymentController.text} บาท')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('เงินต้น')),
-                      DataCell(
-                        Text(
-                          '${(double.tryParse(_loanAmountController.text) ?? 0) - (double.tryParse(_downPaymentController.text) ?? 0)} บาท',
+                      TextField(
+                        controller: _interestRateController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'อัตราดอกเบี้ย (%)',
+                        ),
+                      ),
+                      TextField(
+                        controller: _loanTermController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'ระยะเวลากู้ (ปี)',
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: _calculatePayment,
+                        child: Text('คำนวณ'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: _showQuotation,
+                        child: Text('สร้างใบเสนอราคา'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('ค่างวดต่อเดือน')),
-                      DataCell(Text('$_monthlyPayment บาท/เดือน')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('ยอดชำระทั้งหมด')),
-                      DataCell(Text('$_totalPayment บาท')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('ดอกเบี้ยรวม')),
-                      DataCell(Text('$_totalInterest บาท')),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20), // เพิ่มระยะห่างจากขอบล่างของหน้าจอ
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: _calculatePayment,
-                  child: Text('คำนวณ'),
                 ),
-                ElevatedButton(onPressed: _resetFields, child: Text('รีเซ็ต')),
-                ElevatedButton(
-                  onPressed: _showQuotation,
-                  child: Text('ใบเสนอราคา'),
+                SizedBox(
+                  height: 20,
+                ), // เพิ่มระยะห่างระหว่าง GridView และ DataTable
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(
+                        label: Text(
+                          'รายการ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'ผลลัพธ์',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                    rows: [
+                      DataRow(
+                        cells: [
+                          DataCell(Text('เงินดาวน์')),
+                          DataCell(Text('${_downPaymentController.text} บาท')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          DataCell(Text('เงินต้น')),
+                          DataCell(
+                            Text(
+                              '${(double.tryParse(_loanAmountController.text) ?? 0) - (double.tryParse(_downPaymentController.text) ?? 0)} บาท',
+                            ),
+                          ),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          DataCell(Text('ค่างวดต่อเดือน')),
+                          DataCell(Text('$_monthlyPayment บาท/เดือน')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          DataCell(Text('ยอดชำระทั้งหมด')),
+                          DataCell(Text('$_totalPayment บาท')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          DataCell(Text('ดอกเบี้ยรวม')),
+                          DataCell(Text('$_totalInterest บาท')),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20), // เพิ่มระยะห่างจากขอบล่างของหน้าจอ
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _calculatePayment,
+                      child: Text('คำนวณ'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _resetFields,
+                      child: Text('รีเซ็ต'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _showQuotation,
+                      child: Text('ใบเสนอราคา'),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          if (_isLoading)
+            Container(
+              color: Colors.black54,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+        ],
       ),
     );
   }

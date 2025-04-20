@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
-import 'car_loan_calculator_screen.dart'; // Import the Car Loan Calculator screen
-import 'bid_history_screen.dart'; // Import the Bid History Screen
-import 'settings_screen.dart'; // Import the Settings Screen
+import 'package:smartloan/screens/CustomerManagement/CustomerManagement_screen.dart';
+import 'package:smartloan/screens/Loan/CarLoan_screen.dart';
+import 'package:smartloan/screens/Loan/HomeLoan_screen.dart';
+import 'package:smartloan/screens/Loan/PersonalLoan_screen.dart';
+import '../History/history_screen.dart'; // Import the Bid History Screen
+import '../settings_screen.dart'; // Import the Settings Screen
+import '../../widgets/bottom_nav_items.dart'; // Import the new file
 
-class MainMenuScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
   _MainMenuScreenState createState() => _MainMenuScreenState();
 }
 
-class _MainMenuScreenState extends State<MainMenuScreen> {
+class _MainMenuScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    MainMenuScreenContent(),
-    BidHistoryScreen(), // Replace Placeholder with Bid History Screen
+    HomeScreenContent(),
+    HistoryScreen(), // Replace Placeholder with Bid History Screen
     SettingsScreen(), // Replace with Settings Screen
+    CustomerManagementScreen(),
   ];
 
   @override
@@ -33,20 +38,13 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             _currentIndex = index;
           });
         },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'หน้าหลัก'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'ประวัติการเสนอราคา',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'ตั้งค่า'),
-        ],
+        items: bottomNavItems, // Use the constant from the new file
       ),
     );
   }
 }
 
-class MainMenuScreenContent extends StatelessWidget {
+class HomeScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -170,8 +168,12 @@ class MainMenuScreenContent extends StatelessWidget {
     {
       'icon': Icons.attach_money,
       'color': Colors.green.shade700,
-      'label': 'Loan Products',
+      'label': 'Personal Loan',
       'onTap': () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PersonalLoanScreen()),
+        );
         // Navigate to Loan Products Screen
       },
     },
@@ -180,7 +182,10 @@ class MainMenuScreenContent extends StatelessWidget {
       'color': Colors.blue.shade700,
       'label': 'Home Loan Calculator',
       'onTap': () {
-        // Navigate to Home Loan Calculator Screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeLoanScreen()),
+        );
       },
     },
     {
@@ -190,7 +195,7 @@ class MainMenuScreenContent extends StatelessWidget {
       'onTap': () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CarLoanCalculatorScreen()),
+          MaterialPageRoute(builder: (context) => CarLoanScreen()),
         );
       },
     },
@@ -199,17 +204,9 @@ class MainMenuScreenContent extends StatelessWidget {
       'color': Colors.purple.shade700,
       'label': 'Customer Management',
       'onTap': () {
-        // Navigate to Customer Management Screen
-      },
-    },
-    {
-      'icon': Icons.settings,
-      'color': Colors.grey.shade700,
-      'label': 'Settings',
-      'onTap': () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SettingsScreen()),
+          MaterialPageRoute(builder: (context) => CustomerManagementScreen()),
         );
       },
     },
